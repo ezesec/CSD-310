@@ -1,4 +1,5 @@
 """ import statements """
+import time
 import argparse
 import mysql.connector
 from mysql.connector import errorcode
@@ -35,16 +36,23 @@ try:
                  "GROUP BY film.title "
                  "HAVING film.title LIKE %s "
                  "ORDER BY total_rentals DESC;")
+        start_time = time.time()
         cursor.execute(query, (f"{filter}%",))
         for result in cursor.fetchall():
             print(result[1], "\t", result[0])
+        end_time = time.time()
+        print(f"\nTotal execution time: {end_time - start_time:.5f}\n\n")
 
     elif args.stored_procedure:
         sp_filter = args.stored_procedure
+        start_time = time.time()
         cursor.callproc("GetFilmRentals", [sp_filter])
         for result in cursor.stored_results():
             for row in result.fetchall():
                 print(row[1], "\t", row[0])
+        end_time = time.time()
+        print(f"\nTotal execution time: {end_time - start_time:.5f}\n\n")
+        
 
     else:
         print("Please enter a valid command.")
@@ -63,7 +71,3 @@ except mysql.connector.Error as err:
 finally:
     if 'db' in locals() or 'db' in globals():
         db.close()
-
-
-
-
