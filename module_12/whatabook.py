@@ -19,6 +19,7 @@ config = {
     "raise_on_warnings": True
 }
 
+""" function definitions """
 def show_logo():
     print(
 " _       ____          __        __                __" + "\n" +  
@@ -27,41 +28,99 @@ def show_logo():
 "| |/ |/ / / / / /_/ / /_/ /_/ / /_/ / /_/ / /_/ / ,<   " + "\n" +
 "|__/|__/_/ /_/\__,_/\__/\__,_/_.___/\____/\____/_/|_|  " + "\n" +
 "-------------------EBENEZER EVANOFF--------------------" + "\n")
-    
 
-def show_menu():
-    """ A function to display the main menu """
 
-    print("\n[#] MAIN MENU\n")
-    print("[1] View Books\n[2] View Store Locations\n[3] My Account\n[4] Exit Program\n")
+def user_input(num=None, user_ids=None, book_ids=None):
+    """ A function to manage the user's input """
 
-    # Set the number of attempts to 3
+     # Set the number of attempts to 3
     attempts = 3
 
     while attempts > 0:
-    # Loop until the user enters a valid choice or runs out of attempts
+        # Loop until the user enters a valid choice or runs out of attempts
         try:
             for attempt in range(attempts):
-                choice = int(input('[>] Enter your choice [1-4]: '))
-                if choice < 1 or choice > 4:
-                    attempts -= 1
-                    if attempts > 0:
-                        print(f"[!] Invalid choice. Please try again. Attempts remaining: {attempts}\n")
+                # If the user is in Main or Account Menu's, validate the user's choice is between 1 and the number of options
+                if num is not None:
+                    choice = int(input(f"[>] Enter your choice [1-{num}]: "))
+                    if choice < 1 or choice > num:
+                        attempts -= 1
+                        if attempts > 0:
+                            print(f"[!] Invalid choice. Please try again. Attempts remaining: {attempts}\n")
+                        else:
+                            print("[!] Too many failed attempts. Exiting program.\n")
+                            sys.exit(0)
                     else:
-                        print("[!] Too many failed attempts. Exiting program.\n")
-                        sys.exit(0)
-                else:
-                    return choice
-                
-        # If the user enters a non-integer value, display an error message and exit the program after 3 failed attempts
+                        return choice
+                # If the user is in the Account Menu, validate the user's choice is in the list of valid user IDs
+                elif user_ids is not None:
+                    user_id = int(input('\n[>] Enter a customer id: '))
+                    if user_id in user_ids:
+                        return user_id
+                    else:
+                        attempts -= 1
+                        if attempts > 0:
+                            print(f"[!] Invalid customer id. Please try again. Attempts remaining: {attempts}\n")
+                        else:
+                            print("[!] Too many failed attempts. Exiting program.\n")
+                            sys.exit(0)
+                # If the user is in the Account Menu, validate the user's choice is in the list of valid book IDs
+                elif book_ids is not None:
+                    book_id = int(input('[>] Enter the ID of the book you would like to add to your wishlist: '))
+                    if book_id in book_ids:
+                        return book_id
+                    else:
+                        attempts -= 1
+                        if attempts > 0:
+                            print(f"[!] Invalid book id. Please try again. Attempts remaining: {attempts}\n")
+                        else:
+                            print("[!] Too many failed attempts. Exiting program.\n")
+                            sys.exit(0)
+
+        # If the user enters a non-integer value, display an error message and decrement the number of attempts
         except ValueError:
             attempts -= 1
             if attempts > 0:
-                print(f"[!] Invalid character. Please try again. Attempts remaining: {attempts}\n")
+                print(f"[!] Invalid choice. Please try again. Attempts remaining: {attempts}\n")
             else:
                 print("[!] Too many failed attempts. Exiting program.\n")
                 sys.exit(0)
 
+def display_banner(text):
+    """ A function to display a text banner """
+
+    # Dictionary of symbols used to create the banner
+    symbols = { "END": "-", "-": "+", "DISPLAYING BOOKS": "+", "DISPLAYING STORE LOCATIONS": "+", "DISPLAYING WISHLIST": "+", "MAIN MENU": "#", "ACCOUNT MENU": "#"}
+    
+    # Calculate the remaining length of the banner, where the dashes are displayed.
+    total_length = 52 
+    text_length = len(text) + 4  
+    remaining_length = total_length - text_length
+
+    # Check if the remaining length is even or odd, and set the number of dashes on the left and right sides accordingly
+    if remaining_length % 2 == 0:
+        dashes_left = dashes_right = remaining_length // 2
+    else:
+        dashes_left = remaining_length // 2
+        dashes_right = dashes_left + 1
+
+    # Construct banner and display it
+    display = f'\n[{symbols[text]}]{ "-" * dashes_left } {text} { "-" * dashes_right }[{symbols[text]}]\n'
+
+    print(display)
+    
+def display_continue():
+    """ A function to display a continue message """
+
+    input("[>] Press any key to continue: ")
+
+def show_menu():
+    """ A function to display the main menu """
+
+    display_banner("MAIN MENU")
+    print("[1] View Books\n[2] View Store Locations\n[3] My Account\n[4] Exit Program\n")
+
+    return user_input(num=4) # Return the user's choice
 
 def show_books(_cursor):
     """ A function to display all books in the database """
@@ -73,7 +132,7 @@ def show_books(_cursor):
     # Get the results from the cursor object
     books = _cursor.fetchall()
 
-    print("\n[+]-------------DISPLAYING BOOK LISTING-------------[+]\n")
+    display_banner("DISPLAYING BOOKS")
     
     # Iterate over the query data set and display the results 
     for book in books:
@@ -82,10 +141,9 @@ def show_books(_cursor):
         else:
             print(f"Title: {book[1]}\nAuthor: {book[2]}\nDetails: {book[3]}\n")
 
-    print("[-]-----------------------END------------------------[-]")
-    input("[>] Press any key to return to the main menu: ")
+    display_banner("END")
+    display_continue()
   
-
 def show_locations(_cursor):
     """ A function to display all store locations in the database """
 
@@ -96,15 +154,14 @@ def show_locations(_cursor):
     # Get the results from the cursor object
     locations = _cursor.fetchall()
 
-    print("\n[+]------------DISPLAYING STORE LOCATIONS------------[+]\n")
+    display_banner("DISPLAYING STORE LOCATIONS")
 
     # Iterate over the query data set and display the results 
     for location in locations:
         print(f"Locale: {location[1]}\n")
 
-    print("[-]-----------------------END------------------------[-]")
-    input("[>] Press any key to return to the main menu: ")
-
+    display_banner("END")
+    display_continue()
 
 def validate_user(_cursor):
     """ A function to validate the user's ID """
@@ -115,35 +172,8 @@ def validate_user(_cursor):
     # Get the results from the cursor object and store in a list
     users = [user[0] for user in _cursor.fetchall()]  # Used to validate the user's ID is in the database
     
-    # Set the number of attempts to 3
-    attempts = 3
-
-    while attempts > 0:
-        # Loop until the user enters a valid ID or runs out of attempts
-        try:
-            user_id = int(input('\n[>] Enter a customer id: '))
-            # If the user enters a valid ID, return the ID
-            if user_id in users:
-                return user_id
-            else:
-                attempts -= 1 
-
-                # Check if there are attempts remaining before prompting to try again
-                if attempts > 0:
-                    print(f"[!] Invalid customer number. Please try again. Attempts remaining: {attempts}")
-                else:
-                    print("[!] Too many failed attempts. Exiting program.\n")
-                    sys.exit(0)
-
-        # If the user enters a non-integer value, display an error message and exit the program after 3 failed attempts
-        except ValueError:
-            attempts -= 1
-            if attempts > 0:
-                print(f"[!] Please enter a valid integer for customer ID. Attempts remaining: {attempts}")
-            else:
-                print("[!] Too many failed attempts. Exiting program.\n")
-                sys.exit(0)
-
+    # Return the user's ID
+    return user_input(user_ids=users)
 
 def show_account_menu(_cursor, _user_id):
     """ A function to display the user's account menu """
@@ -156,39 +186,14 @@ def show_account_menu(_cursor, _user_id):
     user = _cursor.fetchone()
 
     # Display the user's first and last name
-    print(f"\n[+] Welcome back, {user[0]} {user[1]}!\n")
+    print(f"\n[+] Welcome back, {user[0].upper()} {user[1].upper()}!")
 
     # Display the user's account menu
-    print("[#] ACCOUNT MENU\n")
+    display_banner("ACCOUNT MENU")
     print("[1] Wishlist\n[2] Add Book\n[3] Main Menu\n")
 
-    # Set the number of attempts to 3
-    attempts = 3
-
-    while attempts > 0:   
-        # Loop until the user enters a valid choice or runs out of attempts
-        try:
-            for attempt in range(attempts):
-                account_option = int(input('[>] Enter your choice [1-3]: '))
-                if account_option < 1 or account_option > 3:
-                    attempts -= 1
-                    if attempts > 0:
-                        print(f"[!] Invalid choice. Please try again. Attempts remaining: {attempts}\n")
-                    else:
-                        print("[!] Too many failed attempts. Exiting program.\n")
-                        sys.exit(0)
-                else:
-                    return account_option
-                
-        # If the user enters a non-integer value, display an error message and exit the program after 3 failed attempts
-        except ValueError:
-            attempts -= 1
-            if attempts > 0:
-                print(f"[!] Invalid character. Please try again. Attempts remaining: {attempts}\n")
-            else:
-                print("[!] Too many failed attempts. Exiting program.\n")
-                sys.exit(0)
-
+    # Return the user's choice
+    return user_input(num=3) 
 
 def show_wishlist(_cursor, _user_id):
     """ A function to display the user's wishlist """
@@ -204,15 +209,14 @@ def show_wishlist(_cursor, _user_id):
     # Get the results from the cursor object
     wishlist = _cursor.fetchall()
 
-    print("\n[+]-------------DISPLAYING WISHLIST ITEMS-------------[+]\n")
+    display_banner("DISPLAYING WISHLIST")
 
     # Iterate over the query data set and display the results 
     for item in wishlist:
         print(f"Title: {item[4]}\nAuthor: {item[5]}\n")
 
-    print("[-]-----------------------END-------------------------[-]")
-    input("[>] Press any key to return to the main menu: ")
-
+    display_banner("END")
+    display_continue()
 
 def show_books_to_add(_cursor, _user_id):
     """ A function to display all books that the user can add to their wishlist """
@@ -224,48 +228,24 @@ def show_books_to_add(_cursor, _user_id):
     # Get the results from the cursor object
     books = _cursor.fetchall()
 
-    print("\n[+]-------------DISPLAYING BOOK LISTING-------------[+]\n")
+    display_banner("DISPLAYING BOOKS")
+
+    # Store the book IDs and titles in separate lists
+    book_ids = [book[0] for book in books] # Used to validate the user's choice
+    titles = [book[1] for book in books] # Used to display the title of the book the user chose
     
     # Iterate over the query data set and display the results 
     for book in books:
-        # Store the book IDs and titles in separate lists
-        ids = [book[0] for book in books] # Used to validate the user's choice
-        titles = [book[1] for book in books] # Used to display the title of the book the user chose
-
         if book[3] is None:
             print(f"Book ID: {book[0]}\tTitle: {book[1]} --- Author: {book[2]}\n")
         else:
             print(f"Book ID: {book[0]}\tTitle: {book[1]} --- Author: {book[2]} --- Details: {book[3]}\n")
 
-    print("[-]--------------------------------------------------[-]\n")
+    display_banner("-")
     
-    # Set the number of attempts to 3
-    attempts = 3
-
-    while attempts > 0:
-    # Loop until the user enters a valid choice or runs out of attempts
-        try:
-            for attempt in range(attempts):
-                book_id = int(input('[>] Enter the ID of the book you would like to add to your wishlist: '))
-                if book_id in ids:
-                    return book_id, titles[ids.index(book_id)]
-                else:
-                    attempts -= 1
-                    if attempts > 0:
-                        print(f"[!] Invalid choice. Please try again. Attempts remaining: {attempts}\n")
-                    else:
-                        print("[!] Too many failed attempts. Exiting program.\n")
-                        sys.exit(0)
-                
-        # If the user enters a non-integer value, display an error message and exit the program after 3 failed attempts
-        except ValueError:
-            attempts -= 1
-            if attempts > 0:
-                print(f"[!] Invalid character. Please try again. Attempts remaining: {attempts}\n")
-            else:
-                print("[!] Too many failed attempts. Exiting program.\n")
-                sys.exit(0)
-
+    # Return the user's choice and the title of the book they chose
+    choice = user_input(book_ids=book_ids)
+    return choice, titles[book_ids.index(choice)]
 
 def add_book_to_wishlist(_cursor, _user_id, _book_id, title):
     """ A function to add a book to the user's wishlist """
@@ -274,10 +254,10 @@ def add_book_to_wishlist(_cursor, _user_id, _book_id, title):
     query = ("INSERT INTO wishlist(user_id, book_id) VALUES (%s, %s)")
     _cursor.execute(query, (_user_id, _book_id))
 
+    # Display a success message with the title of the book that was added to the user's wishlist
     print(f'\n[+] "{title}" was added to your wishlist!\n')
-    print("[-]-----------------------END------------------------[-]")
-    input("[>] Press any key to return to the main menu: ")
-
+    display_banner("END")
+    display_continue()
 
 def main():
     """ The main function of the program """
@@ -338,6 +318,5 @@ def main():
     finally:
         db.close()
 
-# Call the main function
 if __name__ == "__main__":
     main()

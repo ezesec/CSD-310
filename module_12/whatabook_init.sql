@@ -112,6 +112,15 @@ INSERT INTO user(first_name, last_name) VALUES('Will', 'Smith');
 INSERT INTO user(first_name, last_name) VALUES('Denzel', 'Washington');
 INSERT INTO user(first_name, last_name) VALUES('Morgan', 'Freeman');
 INSERT INTO user(first_name, last_name) VALUES('Al', 'Pacino');
+INSERT INTO user(first_name, last_name) VALUES('Leonardo', 'DiCaprio');
+INSERT INTO user(first_name, last_name) VALUES('Bradley', 'Cooper');
+INSERT INTO user(first_name, last_name) VALUES('Jennifer', 'Lawrence');
+INSERT INTO user(first_name, last_name) VALUES('Meryl', 'Streep');
+INSERT INTO user(first_name, last_name) VALUES('Julia', 'Roberts');
+INSERT INTO user(first_name, last_name) VALUES('Emma', 'Stone');
+INSERT INTO user(first_name, last_name) VALUES('Emma', 'Watson');
+INSERT INTO user(first_name, last_name) VALUES('Jennifer', 'Aniston');
+INSERT INTO user(first_name, last_name) VALUES('Sandra', 'Bullock');
 
 -- insert wishlist records
 INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE first_name = 'Thorin' AND last_name = 'Oakenshield'), (SELECT book_id FROM book WHERE book_name = 'The Hobbit or There and Back Again'));
@@ -125,3 +134,7 @@ INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE fi
 INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE first_name = 'Randy' AND last_name = 'Savage'), (SELECT book_id FROM book WHERE book_name = 'The Grapes of Wrath'));
 INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE first_name = 'Scarlett' AND last_name = 'Johansson'), (SELECT book_id FROM book WHERE book_name = 'The Adventures of Huckleberry Finn'));
 INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE first_name = 'Hulk' AND last_name = 'Hogan'), (SELECT book_id FROM book WHERE book_name = 'The Odyssey'));
+INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE first_name = 'Robert' AND last_name = 'De Niro'), (SELECT book_id FROM book WHERE book_name = 'The Adventures of Tom Sawyer'));
+INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE first_name = 'Ric' AND last_name = 'Flair'), (SELECT book_id FROM book WHERE book_name = 'To Kill a Mockingbird'));
+INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE first_name = 'Shawn' AND last_name = 'Michaels'), (SELECT book_id FROM book WHERE book_name = 'In Search of Lost Time'));
+INSERT INTO wishlist(user_id, book_id) VALUES((SELECT user_id FROM user WHERE first_name = 'Brad' AND last_name = 'Pitt'), (SELECT book_id FROM book WHERE book_name = 'Ulysses'));
